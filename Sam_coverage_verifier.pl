@@ -11,7 +11,7 @@
 #	usage perl Sam_coverage_verifier.pl /
 #		  	   Genome_file.fa/
 #			   Sam_file.sam/
-#			   Window_size/
+#			   Sequence_read_length/
 #			   output.txt
 
 
