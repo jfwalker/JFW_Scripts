@@ -1,0 +1,72 @@
+#Remove_Ambiguous
+#by: Joseph Walker (jfwalker@umich.edu)
+#low memory nucleotide ambiguous site remover
+#usage: Remove_Ambiguous.pl Phylip.phy
+
+use Data::Dumper;
+$line_count = 0;
+open(PHYLIP, $ARGV[0])||die "No phylip";
+while ($line = <PHYLIP>){
+
+	chomp $line;
+	if ($line_count >= 2){
+		
+		@seq_array = [];
+		$sequence = ($line =~ m/.*?\s+(.*)/)[0];
+		$sequence =~ tr/ATCGatca/XXXXXXXX/;
+		@seq_array = split "", $sequence;
+		foreach $i (0..$#seq_array){
+			if ($seq_array[$i] ne "X"){
+				
+				#print "$seq_array[$i]\n";
+				$HASH{$i+1}[0]++;
+			}
+		}
+	}elsif($line_count == 0){
+
+			$count = ($line =~ m/(\d*?) \d*/)[0];
+			$line_count++;
+	
+	}else{
+		$line_count++;
+	}
+
+}
+$percent = int(int($count)/int(2));
+#print "$percent\n";
+open(PHYLIP, $ARGV[0])||die "No phylip";
+while ($line = <PHYLIP>){
+
+	chomp $line;
+	if ($line_count >= 2){
+		
+		@seq_array = [];
+		$name = ($line =~ m/(.*?)\s+.*/)[0];
+		$sequence = ($line =~ m/.*?\s+(.*)/)[0];
+		@seq_array = split "", $sequence;
+		print "$name\t";
+		foreach $i (0..$#seq_array){
+		
+			if(exists $HASH{$i+1} && $HASH{$i+1}[0] >= $percent){
+
+				#print "$HASH{$i}[0]\n";
+				#print "$seq_array[$i]";
+			}
+			else{
+				print "$seq_array[$i]";
+			}
+
+		}
+		print "\n";
+	}elsif($line_count == 0){
+
+		print "$line\n";
+		$line_count++;
+	
+	}else{
+		$line_count++;
+	}
+
+}
+
+#print Dumper(\%HASH);
